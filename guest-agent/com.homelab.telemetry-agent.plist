@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.homelab.telemetry-agent</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/local/bin/telemetry-agent.sh</string>
+  </array>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <!-- Adjust to match the actual virtio-serial device path exposed
+         inside this guest (varies by driver / VirtIO version). -->
+    <key>TELEMETRY_DEVICE</key>
+    <string>/dev/cu.virtio-serial0</string>
+  </dict>
+
+  <!-- Run every 60 seconds. Adjust to taste. -->
+  <key>StartInterval</key>
+  <integer>60</integer>
+
+  <key>RunAtLoad</key>
+  <true/>
+
+  <!-- Do not keep restarting aggressively if the device is missing;
+       StartInterval already provides periodic retry. -->
+  <key>KeepAlive</key>
+  <false/>
+
+  <key>StandardOutPath</key>
+  <string>/tmp/telemetry-agent.log</string>
+  <key>StandardErrorPath</key>
+  <string>/tmp/telemetry-agent.log</string>
+</dict>
+</plist>

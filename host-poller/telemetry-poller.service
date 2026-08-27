@@ -1,0 +1,26 @@
+[Unit]
+Description=Hackintosh VM telemetry poller for VM %i
+After=network.target
+
+[Service]
+Type=simple
+# Run as an unprivileged, dedicated service account rather than root.
+# Create it once with: useradd --system --no-create-home telemetry
+User=telemetry
+Group=telemetry
+ExecStart=/usr/bin/python3 /opt/telemetry/telemetry-poller.py \
+  --socket /var/run/telemetry/%i.sock \
+  --log-file /var/log/telemetry/%i.jsonl
+Restart=on-failure
+RestartSec=5
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log/telemetry
+ReadOnlyPaths=/var/run/telemetry
+
+[Install]
+WantedBy=multi-user.target
