@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.homelab.fake-qga</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/bin/python3</string>
+    <string>/usr/local/bin/fake-qga.py</string>
+  </array>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <!-- Proxmox always wires the real qemu-ga channel under this name
+         when `agent: enabled=1` is set on the VM, regardless of guest OS. -->
+    <key>QGA_DEVICE</key>
+    <string>/dev/cu.org.qemu.guest_agent.0</string>
+  </dict>
+
+  <key>RunAtLoad</key>
+  <true/>
+
+  <!-- Persistent responder, not an interval job: restart it if it ever
+       exits so Proxmox's agent queries keep getting answered. -->
+  <key>KeepAlive</key>
+  <true/>
+
+  <key>StandardOutPath</key>
+  <string>/tmp/fake-qga.log</string>
+  <key>StandardErrorPath</key>
+  <string>/tmp/fake-qga.log</string>
+</dict>
+</plist>

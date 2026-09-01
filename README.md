@@ -22,6 +22,32 @@ listening port on the guest.
 | `guest-agent/com.homelab.telemetry-agent.plist` | macOS guest | `launchd` job that runs the agent on an interval. |
 | `host-poller/telemetry-poller.py` | Proxmox/QEMU host | Reads JSON lines from the chardev's host-side UNIX socket and appends them to a local, size-bounded log. |
 | `host-poller/telemetry-poller.service` | Proxmox/QEMU host | systemd unit to run the poller continuously. |
+| `guest-agent/fake-qga.py` | macOS guest | Optional. Speaks just enough of the real QEMU Guest Agent JSON-RPC protocol (`guest-sync[-delimited]`, `guest-ping`, `guest-info`, `guest-network-get-interfaces`) on Proxmox's own guest-agent channel so the VM's IP shows up in the Proxmox web UI ("IPs" panel) and `qm agent <vmid> network-get-interfaces` works, without a real qemu-ga build. |
+| `guest-agent/com.homelab.fake-qga.plist` | macOS guest | `launchd` job that keeps `fake-qga.py` running as a persistent responder. |
+
+## Optional: real guest-agent IP display
+
+`fake-qga.py` is separate from the telemetry pipeline above and uses Proxmox's
+own guest-agent channel instead of the custom one, so Proxmox has to be told
+to wire that channel: set `agent: enabled=1` on the VM (`qm set <vmid> --agent
+enabled=1`), then restart the VM. Proxmox then automatically adds a second
+virtio-serial device chain named `org.qemu.guest_agent.0`, independent of the
+`org.homelab.telemetry` one above — the two coexist fine.
+
+It only implements read-only status/network commands; anything else (exec,
+file read/write, filesystem freeze) gets a `CommandNotFound` error, same as a
+real agent would return for an unsupported command.
+
+1. Copy `guest-agent/fake-qga.py` to `/usr/local/bin/fake-qga.py`, `chmod +x`.
+2. Copy `guest-agent/com.homelab.fake-qga.plist` to `~/Library/LaunchAgents/`,
+   then `launchctl load ~/Library/LaunchAgents/com.homelab.fake-qga.plist`.
+3. The device path is normally `/dev/cu.org.qemu.guest_agent.0` (see
+   `docs/guest-device-notes.md` for how the naming works) — set `QGA_DEVICE`
+   in the plist's `EnvironmentVariables` if it differs.
+
+Note: a per-user `LaunchAgent` only starts once that user's GUI session is
+active (autologin or a console login), not at boot before anyone is logged
+in. That matches how `telemetry-agent`'s LaunchAgent already behaves here.
 
 ## VM configuration (host side)
 
