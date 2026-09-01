@@ -1,5 +1,12 @@
 # hackintosh-vm-telemetry
 
+> **For testing purposes only.** Running macOS on non-Apple hardware
+> (including as a QEMU/Proxmox guest) violates Apple's software license
+> agreement. This project is for personal lab/testing use, not production or
+> redistribution.
+>
+> Tested and working on macOS Sonoma (14.8.9).
+
 Lightweight telemetry pipeline for a macOS (Hackintosh) guest running under
 QEMU/Proxmox, using a **virtio-serial** channel instead of the network stack.
 The guest periodically emits a small JSON status blob over the serial
