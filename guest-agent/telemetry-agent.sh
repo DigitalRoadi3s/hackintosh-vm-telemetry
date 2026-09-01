@@ -38,7 +38,7 @@ ts="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 hostname_val="$(hostname -s 2>/dev/null || echo unknown)"
 
 # uptime in seconds
-boot_epoch="$(sysctl -n kern.boottime 2>/dev/null | sed -E 's/.*sec = ([0-9]+).*/\1/')"
+boot_epoch="$(sysctl -n kern.boottime 2>/dev/null | sed -E 's/^\{ sec = ([0-9]+).*/\1/')"
 now_epoch="$(date -u '+%s')"
 if [[ -n "${boot_epoch}" ]]; then
   uptime_seconds=$(( now_epoch - boot_epoch ))
