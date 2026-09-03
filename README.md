@@ -5,7 +5,7 @@
 > agreement. This project is for personal lab/testing use, not production or
 > redistribution.
 >
-> Tested and working on macOS Sonoma (14.8.9).
+> Tested and working on macOS Sonoma (14.8.9) and Sequoia (15).
 
 Lightweight telemetry pipeline for a macOS (Hackintosh) guest running under
 QEMU/Proxmox, using a **virtio-serial** channel instead of the network stack.
